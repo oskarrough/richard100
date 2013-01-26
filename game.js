@@ -1,7 +1,4 @@
 // http://www.html5rocks.com/en/tutorials/casestudies/onslaught/#toc-the-game-loop
-
-
-
 /* @TODO:
 
 - highscore system med HTML5 data storage
@@ -12,89 +9,81 @@
 
 */
 
-// RequestAnimFrame: a browser API for getting smooth animations
-window.requestAnimFrame = (function() {
-	return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
-	function(callback) {
-		window.setTimeout(callback, 1000 / 60);
-	};
-})();
+
 
 
 // Create the canvas
-var canvas = document.createElement("canvas");
-var ctx = canvas.getContext("2d");
+var canvas = document.createElement("canvas"),
+	ctx = canvas.getContext("2d"),
+	debug = document.createElement("div");
 canvas.width = 512;
 canvas.height = 480;
 document.body.appendChild(canvas);
-
-// For debugging
-var debug = document.createElement("div");
-debug.className = 'debug';
 document.body.appendChild(debug);
+debug.className = 'debug';
 
 
-// Game objects
-var pregame = true,
-    monstersCaught = 0,
-    energysCaught = 0;
-
-var bg = {
-    asset: new Asset("https://dl.dropbox.com/u/638306/Richard100/background.png")
-};
-var hero = {
-	speed: 256, // movement in pixels per second
-	x: 0,
-	y: 0,
-	asset: new Asset("https://dl.dropbox.com/u/638306/Richard100/hero.png")
-};
-var monster = {
-	x: 0,
-	y: 0,
-  asset: new Asset("https://dl.dropbox.com/u/638306/Richard100/monster.png")
-};
-var energy = {
-	x: 0,
-	y: 0,
-	asset: new Asset("https://dl.dropbox.com/u/638306/Richard100/energy.png")
-};
-
-
-
-// Get images/assets
+// Asset class
 function Asset(src) {
 	this.loaded = false;
-    this.img = new Image();
+	this.img = new Image();
 	this.img.onload = function () {
-      this.loaded = true;
+		this.loaded = true;
 	};
 	this.img.src = src;
 }
 
+// Game objects
+var pregame = true,
+	monstersCaught = 0,
+	energysCaught = 0,
+	bg = {
+		asset: new Asset("https://dl.dropbox.com/u/638306/Richard100/background.png")
+	},
+	hero = {
+		speed: 256, // movement in pixels per second
+		x: 0,
+		y: 0,
+		asset: new Asset("https://dl.dropbox.com/u/638306/Richard100/hero.png")
+		// asset.img.onload = function () {
+		//	hero.asset.loaded = true;
+		// };
+	},
+	monster = {
+		x: 0,
+		y: 0,
+		asset: new Asset("https://dl.dropbox.com/u/638306/Richard100/monster.png")
+	},
+	energy = {
+		x: 0,
+		y: 0,
+		asset: new Asset("https://dl.dropbox.com/u/638306/Richard100/energy.png")
+	};
+
 // The following shouldn't be needed but is…
 bg.asset.img.onload = function () {
-  bg.asset.loaded = true;
+	bg.asset.loaded = true;
 };
 hero.asset.img.onload = function () {
-  hero.asset.loaded = true;
+	hero.asset.loaded = true;
 };
 monster.asset.img.onload = function () {
-  monster.asset.loaded = true;
+	monster.asset.loaded = true;
 };
 energy.asset.img.onload = function () {
-  energy.asset.loaded = true;
+	energy.asset.loaded = true;
 };
 
 if(localStorage.length === 0) {
-  localStorage.setItem('highscore', 0);
+	localStorage.setItem('highscore', 0);
 }
 
 // Draw everything
 var render = function () {
-    
-    ctx.drawImage(bg.asset.img, 0, 0);
 	
-    if (hero.asset.loaded) {
+	ctx.drawImage(bg.asset.img, 0, 0);
+	
+	if (hero.asset.loaded) {
 		ctx.drawImage(hero.asset.img, hero.x, hero.y);
 	}
   if (monster.asset.loaded) {
@@ -105,45 +94,37 @@ var render = function () {
 	}
 
 	// Score
-    var xp = 100;
-    xp -= (monstersCaught * 20);
-    xp += (energysCaught * 20);
-  
-  
+	var xp = 100;
+	xp -= (monstersCaught * 20);
+	xp += (energysCaught * 20);
 
 	ctx.fillStyle = "rgb(255, 255, 255)";
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 	ctx.fillText("Dishes collected: " + monstersCaught, 32, 32);
-    ctx.fillText("Weed found: " + energysCaught, 32, 32*2);
-    ctx.fillText("Happiness: " + xp + "%", 32, 32*3);
-  
+	ctx.fillText("Weed found: " + energysCaught, 32, 32*2);
+	ctx.fillText("Happiness: " + xp + "%", 32, 32*3);
 
-  var newHighscore = false;
-  if(localStorage.getItem('highscore') < xp) {
-     
-    localStorage.setItem('highscore', xp);
-    newHighscore = true;
-    console.log('new highscore');
-    }
-    
 
-  
-    if(xp <= 0) {
-      ctx.fillStyle = "rgb(250,80,80)";
-      ctx.fillText("OH NOE!!! Find some weed", 32, 32*4);
-    } else {
-      ctx.fillStyle = "rgb(80,250,80)";
-      ctx.fillText("All good…", 32, 32*4);
-    }
+	var newHighscore = false;
+	if(localStorage.getItem('highscore') < xp) { 
+		localStorage.setItem('highscore', xp);
+		newHighscore = true;
+		console.log('new highscore');
+	}
+	
+	if(xp <= 0) {
+		ctx.fillStyle = "rgb(250,80,80)";
+		ctx.fillText("OH NOE!!! Find some weed", 32, 32*4);
+	} else {
+		ctx.fillStyle = "rgb(80,250,80)";
+		ctx.fillText("All good…", 32, 32*4);
+	}
 
-    ctx.textAlign = "right";
-  ctx.fillText("Highscore: " + localStorage.getItem('highscore') + "%", canvas.width-32, 32);
-  
+	ctx.textAlign = "right";
+	ctx.fillText("Highscore: " + localStorage.getItem('highscore') + "%", canvas.width-32, 32);
 };
-
-
 
 
 // Handle keyboard controls
@@ -178,15 +159,15 @@ var reset = function () {
 
 // Update game objects
 var update = function (modifier) {
-  debug.innerHTML = 'x: ' + Math.round(hero.x) + ', y: ' + Math.round(hero.y) + ', speed: ' + hero.speed + ', modifier: ' + modifier;
-  
-    if (38 in keysDown) { // Player holding up
-        if ( hero.y > 0 ) {
-          hero.y -= hero.speed * modifier;
-        } else {
-          hero.y = 0;
-          //hero.y = canvas.height - 32;
-        }
+	debug.innerHTML = 'x: ' + Math.round(hero.x) + ', y: ' + Math.round(hero.y) + ', speed: ' + hero.speed + ', modifier: ' + modifier;
+
+	if (38 in keysDown) { // Player holding up
+		if ( hero.y > 0 ) {
+			hero.y -= hero.speed * modifier;
+		} else {
+			hero.y = 0;
+			//hero.y = canvas.height - 32;
+		}
 	}
 	if (40 in keysDown) { // Player holding down
 		hero.y += hero.speed * modifier;
@@ -197,10 +178,10 @@ var update = function (modifier) {
 	if (39 in keysDown) { // Player holding right
 		hero.x += hero.speed * modifier;
 	}
-  if (32 in keysDown) { // Player holding space
+	if (32 in keysDown) { // Player holding space
 		hero.y -= (hero.speed*4 ) * modifier;
-        hero.y += (hero.speed*4 ) * modifier;
-//        y = -(X-L/2)(X-L/2)*4*H/(L*L) + H;
+		hero.y += (hero.speed*4 ) * modifier;
+		// y = -(X-L/2)(X-L/2)*4*H/(L*L) + H;
 	}
 
 	// Are they touching?
