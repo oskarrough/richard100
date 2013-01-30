@@ -1,16 +1,13 @@
 // http://www.html5rocks.com/en/tutorials/casestudies/onslaught/#toc-the-game-loop
 /* @TODO:
 
-- highscore system med HTML5 data storage
-- nye grafikker
+- highscore system with HTML5 data storage
+- new graphics
 - adrenalin
 - buffs
 - skills
 
 */
-
-
-
 
 // Create the canvas
 var canvas = document.createElement("canvas"),
@@ -23,6 +20,11 @@ document.body.appendChild(debug);
 debug.className = 'debug';
 
 
+// Game objects
+var pregame = true,
+	monstersCaught = 0,
+	energysCaught = 0;
+
 // Asset class
 function Asset(src) {
 	this.loaded = false;
@@ -33,31 +35,24 @@ function Asset(src) {
 	this.img.src = src;
 }
 
-// Game objects
-var pregame = true,
-	monstersCaught = 0,
-	energysCaught = 0,
-	bg = {
-		asset: new Asset("https://dl.dropbox.com/u/638306/Richard100/background.png")
+var bg = {
+		asset: new Asset("https://dl.dropbox.com/u/638306/richard100/background.png")
 	},
 	hero = {
 		speed: 256, // movement in pixels per second
 		x: 0,
 		y: 0,
-		asset: new Asset("https://dl.dropbox.com/u/638306/Richard100/hero.png")
-		// asset.img.onload = function () {
-		//	hero.asset.loaded = true;
-		// };
+		asset: new Asset("https://dl.dropbox.com/u/638306/richard100/hero.png")
 	},
 	monster = {
 		x: 0,
 		y: 0,
-		asset: new Asset("https://dl.dropbox.com/u/638306/Richard100/monster.png")
+		asset: new Asset("https://dl.dropbox.com/u/638306/richard100/monster.png")
 	},
 	energy = {
 		x: 0,
 		y: 0,
-		asset: new Asset("https://dl.dropbox.com/u/638306/Richard100/energy.png")
+		asset: new Asset("https://dl.dropbox.com/u/638306/richard100/energy.png")
 	};
 
 // The following shouldn't be needed but is…
@@ -86,57 +81,60 @@ var render = function () {
 	if (hero.asset.loaded) {
 		ctx.drawImage(hero.asset.img, hero.x, hero.y);
 	}
-  if (monster.asset.loaded) {
-		ctx.drawImage(monster.asset.img, monster.x, monster.y);
-	}
-  if (energy.asset.loaded) {
-		ctx.drawImage(energy.asset.img, energy.x, energy.y);
-	}
+	// if (monster.asset.loaded) {
+	// 	ctx.drawImage(monster.asset.img, monster.x, monster.y);
+	// }
+	// if (energy.asset.loaded) {
+	// 	ctx.drawImage(energy.asset.img, energy.x, energy.y);
+	// }
 
-	// Score
-	var xp = 100;
-	xp -= (monstersCaught * 20);
-	xp += (energysCaught * 20);
+	// // Score
+	// var xp = 100;
+	// xp -= (monstersCaught * 20);
+	// xp += (energysCaught * 20);
 
-	ctx.fillStyle = "rgb(255, 255, 255)";
-	ctx.font = "24px Helvetica";
-	ctx.textAlign = "left";
-	ctx.textBaseline = "top";
-	ctx.fillText("Dishes collected: " + monstersCaught, 32, 32);
-	ctx.fillText("Weed found: " + energysCaught, 32, 32*2);
-	ctx.fillText("Happiness: " + xp + "%", 32, 32*3);
+	// ctx.fillStyle = "rgb(255, 255, 255)";
+	// ctx.font = "24px Helvetica";
+	// ctx.textAlign = "left";
+	// ctx.textBaseline = "top";
+	// ctx.fillText("Dishes collected: " + monstersCaught, 32, 32);
+	// ctx.fillText("Weed found: " + energysCaught, 32, 32*2);
+	// ctx.fillText("Happiness: " + xp + "%", 32, 32*3);
 
 
-	var newHighscore = false;
-	if(localStorage.getItem('highscore') < xp) { 
-		localStorage.setItem('highscore', xp);
-		newHighscore = true;
-		console.log('new highscore');
-	}
+	// var newHighscore = false;
+	// if(localStorage.getItem('highscore') < xp) {
+	// 	localStorage.setItem('highscore', xp);
+	// 	newHighscore = true;
+	// 	console.log('new highscore');
+	// }
 	
-	if(xp <= 0) {
-		ctx.fillStyle = "rgb(250,80,80)";
-		ctx.fillText("OH NOE!!! Find some weed", 32, 32*4);
-	} else {
-		ctx.fillStyle = "rgb(80,250,80)";
-		ctx.fillText("All good…", 32, 32*4);
-	}
+	// if(xp <= 0) {
+	// 	ctx.fillStyle = "rgb(250,80,80)";
+	// 	ctx.fillText("OH NOE!!! Find some weed", 32, 32*4);
+	// } else {
+	// 	ctx.fillStyle = "rgb(80,250,80)";
+	// 	ctx.fillText("All good…", 32, 32*4);
+	// }
 
-	ctx.textAlign = "right";
-	ctx.fillText("Highscore: " + localStorage.getItem('highscore') + "%", canvas.width-32, 32);
+	// ctx.textAlign = "right";
+	// ctx.fillText("Highscore: " + localStorage.getItem('highscore') + "%", canvas.width-32, 32);
 };
 
 
 // Handle keyboard controls
-var keysDown = {};
+//var handleInput = function(){	
+	// Create an empty array
+	var keysDown = {};
 
-addEventListener("keydown", function (e) {
-	keysDown[e.keyCode] = true;
-}, false);
+	addEventListener("keydown", function (e) {
+		keysDown[e.keyCode] = true;
+	}, false);
 
-addEventListener("keyup", function (e) {
-	delete keysDown[e.keyCode];
-}, false);
+	addEventListener("keyup", function (e) {
+		delete keysDown[e.keyCode];
+	}, false);
+//};
 
 
 
@@ -180,7 +178,7 @@ var update = function (modifier) {
 	}
 	if (32 in keysDown) { // Player holding space
 		hero.y -= (hero.speed*4 ) * modifier;
-		hero.y += (hero.speed*4 ) * modifier;
+		//hero.y += (hero.speed*4 ) * modifier;
 		// y = -(X-L/2)(X-L/2)*4*H/(L*L) + H;
 	}
 
@@ -189,6 +187,7 @@ var update = function (modifier) {
 		++monstersCaught;
 		reset();
 	}
+	
 	// Are they touching?
 	if (hero.x <= (energy.x + 32) && energy.x <= (hero.x + 32) && hero.y <= (energy.y + 32) && energy.y <= (hero.y + 32)) {
 		++energysCaught;
@@ -196,15 +195,27 @@ var update = function (modifier) {
 	}
 };
 
+var monster1,
+	hero1;
+
+function setup() {
+	monster1 = new Monster(50, 50, 10, "https://dl.dropbox.com/u/638306/richard100/monster.png");
+	//hero1 = new Hero();
+}
+
+setup();
+
 
 // The main game loop
-// handleInput(), update(), render()
+// @todo: handleInput(), update(), render()
 var main = function () {
 	var now = Date.now();
 	var delta = now - then;
 
 	update(delta / 1000);
 	render();
+
+	monster1.render();
 
 	then = now;
 };
