@@ -221,7 +221,10 @@ var main = function () {
 };
 
 
-// Let's play this game!
+// Let's play this game and initiate it with requestAnimationFrame (see rAF.js)
 reset();
 var then = Date.now();
-setInterval(main, 1); // Execute as fast as possible
+(function animloop(){
+	requestAnimationFrame(animloop);
+	main();
+})();
