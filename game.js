@@ -36,23 +36,23 @@ function Asset(src) {
 }
 
 var bg = {
-		asset: new Asset("https://dl.dropbox.com/u/638306/richard100/background.png")
+		asset: new Asset("background.png")
 	},
 	hero = {
 		speed: 256, // movement in pixels per second
 		x: 0,
 		y: 0,
-		asset: new Asset("https://dl.dropbox.com/u/638306/richard100/hero.png")
+		asset: new Asset("hero.png")
 	},
 	monster = {
 		x: 0,
 		y: 0,
-		asset: new Asset("https://dl.dropbox.com/u/638306/richard100/monster.png")
+		asset: new Asset("monster.png")
 	},
 	energy = {
 		x: 0,
 		y: 0,
-		asset: new Asset("https://dl.dropbox.com/u/638306/richard100/energy.png")
+		asset: new Asset("energy.png")
 	};
 
 // The following shouldn't be needed but is…
@@ -75,9 +75,9 @@ if(localStorage.length === 0) {
 
 // Draw everything
 var render = function () {
-	
+
 	ctx.drawImage(bg.asset.img, 0, 0);
-	
+
 	if (hero.asset.loaded) {
 		ctx.drawImage(hero.asset.img, hero.x, hero.y);
 	}
@@ -108,7 +108,7 @@ var render = function () {
 	// 	newHighscore = true;
 	// 	console.log('new highscore');
 	// }
-	
+
 	// if(xp <= 0) {
 	// 	ctx.fillStyle = "rgb(250,80,80)";
 	// 	ctx.fillText("OH NOE!!! Find some weed", 32, 32*4);
@@ -123,7 +123,7 @@ var render = function () {
 
 
 // Handle keyboard controls
-//var handleInput = function(){	
+//var handleInput = function(){
 	// Create an empty array
 	var keysDown = {};
 
@@ -187,7 +187,7 @@ var update = function (modifier) {
 		++monstersCaught;
 		reset();
 	}
-	
+
 	// Are they touching?
 	if (hero.x <= (energy.x + 32) && energy.x <= (hero.x + 32) && hero.y <= (energy.y + 32) && energy.y <= (hero.y + 32)) {
 		++energysCaught;
@@ -199,7 +199,7 @@ var monster1,
 	hero1;
 
 function setup() {
-	monster1 = new Monster(50, 50, 10, "https://dl.dropbox.com/u/638306/richard100/monster.png");
+	monster1 = new Monster(50, 50, 10, "monster.png");
 	//hero1 = new Hero();
 }
 
