@@ -1,5 +1,5 @@
 var Bot = Class.$extend({
-	__init__ : function(x, y, speed, imageUrl) {
+	__init__: function(x, y, speed, imageUrl) {
 		this.x = x;
 		this.y = y;
 		this.speed = speed;
@@ -24,11 +24,13 @@ var Bot = Class.$extend({
 		this.initiated = true;
 	},
 
-	setPosition : function() {
-
+	setPosition: function() {
+		// Throw the bot somewhere on the screen randomly
+		this.x = 32 + (Math.random() * (canvas.width - 64));
+		this.y = 32 + (Math.random() * (canvas.height - 64));
 	},
 
-	render : function() {		
+	render: function() {
 		if (this.initiated) {
 			ctx.drawImage(this.img, this.x, this.y);
 		}
